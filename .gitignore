@@ -5,3 +5,4 @@ openapi-generator
 sdk
 venv
 *.pyc
+.env
