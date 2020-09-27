@@ -1,0 +1,13 @@
+{
+  "name": "api-reference",
+  "version": "1.0.0",
+  "dependencies": {
+    "glob": "^7.1.6",
+    "redoc": "2.0.0-rc.41",
+	"redoc-cli": "^0.9.12"
+  },
+  "private": true,
+  "scripts": {
+    "build": "build/build.py"
+  }
+}

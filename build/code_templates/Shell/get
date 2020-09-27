@@ -1,0 +1,5 @@
+curl -G {{base_url}}/{{endpoint}} \
+  -u {{api_key}}: \
+{% for key, val in params.items() %}
+  -d {{key}}={{val|tojson}}{{ " \\\n" if not loop.last }}
+{%- endfor %}

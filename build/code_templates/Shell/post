@@ -1,0 +1,4 @@
+curl {{base_url}}/{{endpoint}} \
+  -u {{api_key}}: \
+  -H "Content-Type: application/json" \
+  -d '{{params|tojson}}'

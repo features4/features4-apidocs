@@ -1,0 +1,15 @@
+library(httr)
+
+url <- "{{base_url}}/{{endpoint}}"
+
+params <- list(
+{% for key, val in params.items() %}  {{key}} = {{val|tojson}}{{ ",\n" if not loop.last }}{%- endfor %}
+)
+
+r <- GET(
+  url = url,
+  query = params,
+  authenticate("{{api_key}}", "")
+)
+
+content(r)

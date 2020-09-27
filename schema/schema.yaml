@@ -1,0 +1,697 @@
+openapi: 3.0.2
+info:
+  title: API Reference
+  version: ''
+  x-logo:
+    url: https://features4.com/img/logo_small_redoc.png
+    href: https://features4.com
+  description: "The Features4 API allows you to access a large set of spatial features\
+    \ conveniently using the tools you are already comfortable working with.\n\nIt\
+    \ is built around [REST](https://en.wikipedia.org/wiki/Representational_state_transfer)\
+    \ and:\n- Uses predictable, resource-oriented URLs.\n- Uses built-in HTTP capabilities\
+    \ for passing parameters and authentication.\n- Accepts [JSON-encoded](https://en.wikipedia.org/wiki/JSON)\
+    \ request bodies.\n- Responds with standard [HTTP response codes](https://en.wikipedia.org/wiki/List_of_HTTP_status_codes)\
+    \ to indicate success or errors.\n- Returns [JSON-encoded](https://en.wikipedia.org/wiki/JSON)\
+    \ responses.\n\n# Quick start\nGetting your first feature is a matter of minutes.\
+    \ Just follow these steps:\n1. [Sign up for a Features4 account](https://dashboard.features4.com/signup).\
+    \ Its free.\n2. [Log into your dashboard](https://dashboard.features4.com/). Copy\
+    \ your private API key from your there.\n3. Copy and paste the code below to make\
+    \ your first request. Please replace `API_TEST_KEY` with your private API key.\n\
+    \n```bash\ncurl https://api.features4.com/v1/number \\\n  -u API_TEST_KEY: \\\n\
+    \  -H \"Content-Type: application/json\" \\\n  -d '{\"lat\": 48.137, \"lng\":\
+    \ 11.576, \"element\": \"bar\", \"radius\": 500}'\n```\n\n> You need to include\
+    \ an API key as username in HTTP Basic Auth. The colon prevents cURL from asking\
+    \ for a password (for details see: [Authentication](#tag/authentication)), otherwise\
+    \ you will receive a `401 - Unauthorized` error.\n\n> You can use the API key\
+    \ `API_TEST_KEY` to try out the examples in this reference. However, the number\
+    \ of features you can get is limited. Use your private API key for more features.\n\
+    \n# Introduction\nThe base url for all API requests is:\n```bash\nhttps://api.features4.com/v1\n\
+    ```\nFor accessing a particular API resource you just append its endpoint name\
+    \ to the base path. If, for example, you want to access the `number` [resource](#operation/Number%20of%20elements)\
+    \ you build the requst url as base url and `/number`:\n<pre><code>https://api.features4.com/v1<span\
+    \ class=\"token variable\">/number</span></code></pre>\nPlease make sure to always\
+    \ use the `https` protocol, because to protect the security of your api keys all\
+    \ requests using the `http` protocol will fail.\n\n## Authentication\nFeatures4\
+    \ uses API keys to authenticate your requests.\nAfter signing up for an account,\
+    \ you can view and manage your personal API key in your [Dashboard](https://dashboard.features4.com).\n\
+    \nYour API key carries many privileges, so be sure to keep it secure! Do not share\
+    \ your private API\nkey in publicly accessible areas such as GitHub, client-side\
+    \ code, and so forth.\n\nAuthentication to the API is performed via HTTP Basic\
+    \ Auth. Provide your API key as the basic auth username value. You do not need\
+    \ to provide a password.\nUsing `curl` you would do this by adding the command\
+    \ line option `-u API_TEST_KEY:`. The colon prevents cURL from asking for a password.\n\
+    \n## Feature limits\nA free Features4 account allows you to use the API for free\
+    \ and obtain a certain number of features. If this\nlimit is exceeded, you will\
+    \ have to wait until the next day until you can make the next request. In this\
+    \ case the API will return a `429 - Too many requests` response.\n\nThere are\
+    \ three headers in the response that will contain more information about your\
+    \ feature limit:\n\n| Header | Description |\n| -- | -- |\n| `X-Feature-Limit-Limit`\
+    \ | Your personal feature limit, i.e. the number of features you can request each\
+    \ day |\n| `X-Feature-Limit-Features` | The number of features you requested |\n\
+    | `X-Feature-Limit-Remaining` | The number of features you have currently available\
+    \ |\n\nYou can also view your personal feature limit, the number of features requested\
+    \ so far, and how many features you still have available in your [dashboard](https://dashboard.features4.com).\n\
+    \nEach feature you request counts towards your personal feature limit. So, for\
+    \ example, if you make one request to the `number` resource it counts\nas 1 feature.\
+    \ If you make a request to the multiple `features` resource the number of features\
+    \ depends. If you request 5 features, these 5 features are\ncounted towards your\
+    \ feature limit.\n\n# API responses\nAll responses from the API have a JSON respone\
+    \ body.\n\n## HTTP status codes\nFeatures4 uses standard HTTP response codes in\
+    \ the response header to indicate the success or failure of an API request.\n\n\
+    In general:\n\n- Codes in the `2xx` range indicate success.\n- Codes in the `4xx`\
+    \ range indicate an error that failed given the information provided (e.g., a\
+    \ required parameter was omitted, falsely specified, etc.).\n- Codes in the `5xx`\
+    \ range indicate an error with Features4's servers (these are rare).\n\n| HTTP\
+    \ code | Description |\n| --- | --- |\n| `200` - OK | Everything worked as expected.\
+    \ |\n| | |\n| `400` - Bad Request |\tThe request could not be completed, often\
+    \ due to a missing required parameter. [Learn more](#parameter-validation-error)|\n\
+    | `401` - Unauthorized |\tThe request could not be authenticated succesfully.\
+    \ [Learn more](#section/Introduction/Authentication)|\n| `402` - Request Failed\
+    \ |\tThe parameters were valid but the request failed. |\n| `403` - Forbidden\
+    \ |\tThe API key doesn't have permissions to perform the request. |\n| `404` -\
+    \ Not Found |\tThe requested resource doesn't exist (often a typo).|\n| `405`\
+    \ - Method not Allowed | A request was made with a method that is not supported.\
+    \ |\n| `415` - Unsupported Media Type | A POST request was made without a `Content-Type:\
+    \ application/json` header.\n| `429` - Too Many Requests |\tThe personal feature\
+    \ request limit was exceeded. [Learn more](#section/Introduction/Feature-limits)|\n\
+    | | |\n| `500`, `502`, `503`, `504` - Server Errors |\tSomething went wrong on\
+    \ Feature4's end. (These are rare.) |\n\nFeatures4 uses one custom status code\
+    \ `419` to indicate that currently there is no data available for the country\
+    \ specified by a given location.\n\n## Errors\nIn addition to the HTTP status\
+    \ code in the response header, most errors response body contains a `message`\
+    \ field with more error details in human-readable form, and\na `code` field which\
+    \ can be used to handle errors programmatically.\n\n### Authentication error\n\
+    For authentication errors, Features4 returns the HTTP `401 - Unauthorized` status\
+    \ code.\n\n| Message | Solution |\n| ------- | -------- |\n| `Authentication credentials\
+    \ were not provided` | Add the header `Authorization: Key API_TEST_KEY` to your\
+    \ request |\n| `Invalid token` | Make sure you provided your (currently active)\
+    \ API key from your dashboard |\n\n### Parameter Validation Error\nValidation\
+    \ errors are raised as `400 - Bad\nRequest` errors. In their body they contain\
+    \ detailed information for each\nparameter that was invalid.\n\n### Feature Limit\
+    \ Error\nIf you exceed the request feature limit of your account a `429 - Too\
+    \ many\nrequests` error is raised.\nIt contains more information on your remaining\
+    \ features.\n```json\n{\n  \"error\": {\n    \"message\": \"Your requested number\
+    \ of features exceeds your feature limit. Number of currently available features:\
+    \ 4\",\n    \"code\": \"feature_limit_exceeded\"\n  }\n}\n```\n"
+paths:
+  /number:
+    post:
+      operationId: Number
+      description: 'The number of map elements in a given radius around a
+
+        location of interest'
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Number'
+            example:
+              lat: 48.11
+              lng: 11.57
+              element: bar
+              radius: 500
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Number'
+              example:
+                name: number_bar_radius_500m
+                value: 24
+          description: success
+      tags:
+      - features
+      x-code-samples:
+      - lang: Python
+        source: "import requests\n\nurl = \"https://api.features4.com/v1/number\"\n\
+          \nauth = (\"API_TEST_KEY\", \"\")\n\njson = {\n  \"lat\": 48.11,\n  \"lng\"\
+          : 11.57,\n  \"element\": \"bar\",\n  \"radius\": 500\n}\n\nr = requests.post(\n\
+          \  url=url,\n  json=json,\n  auth=auth\n)\n\nr.json()"
+      - lang: R
+        source: "library(httr)\nlibrary(jsonlite)\n\nurl <- \"https://api.features4.com/v1/number\"\
+          \n\njson <- '{\n  \"lat\": 48.11,\n  \"lng\": 11.57,\n  \"element\": \"\
+          bar\",\n  \"radius\": 500\n}'\n\nbody <- fromJSON(\n  json,\n  simplifyDataFrame\
+          \ = FALSE\n)\n\nr <- POST(\n  url = url,\n  body = body,\n  encode = \"\
+          json\",\n  authenticate(\"API_TEST_KEY\", \"\")\n)\n\ncontent(r)"
+      - lang: Shell
+        source: "curl https://api.features4.com/v1/number \\\n  -u API_TEST_KEY: \\\
+          \n  -H \"Content-Type: application/json\" \\\n  -d '{\"lat\": 48.11, \"\
+          lng\": 11.57, \"element\": \"bar\", \"radius\": 500}'"
+  /distance:
+    post:
+      operationId: Distance
+      description: The distance to the nearest map element from a location of interest
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Distance'
+            example:
+              lat: 48.11
+              lng: 11.57
+              element: bar
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Distance'
+              example:
+                name: distance_bar_m
+                value: 123
+          description: success
+      tags:
+      - features
+      x-code-samples:
+      - lang: Python
+        source: "import requests\n\nurl = \"https://api.features4.com/v1/distance\"\
+          \n\nauth = (\"API_TEST_KEY\", \"\")\n\njson = {\n  \"lat\": 48.11,\n  \"\
+          lng\": 11.57,\n  \"element\": \"bar\"\n}\n\nr = requests.post(\n  url=url,\n\
+          \  json=json,\n  auth=auth\n)\n\nr.json()"
+      - lang: R
+        source: "library(httr)\nlibrary(jsonlite)\n\nurl <- \"https://api.features4.com/v1/distance\"\
+          \n\njson <- '{\n  \"lat\": 48.11,\n  \"lng\": 11.57,\n  \"element\": \"\
+          bar\"\n}'\n\nbody <- fromJSON(\n  json,\n  simplifyDataFrame = FALSE\n)\n\
+          \nr <- POST(\n  url = url,\n  body = body,\n  encode = \"json\",\n  authenticate(\"\
+          API_TEST_KEY\", \"\")\n)\n\ncontent(r)"
+      - lang: Shell
+        source: "curl https://api.features4.com/v1/distance \\\n  -u API_TEST_KEY:\
+          \ \\\n  -H \"Content-Type: application/json\" \\\n  -d '{\"lat\": 48.11,\
+          \ \"lng\": 11.57, \"element\": \"bar\"}'"
+  /features:
+    post:
+      operationId: Features
+      description: Access multiple features conveniently in a single request.
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Features'
+            example:
+              features:
+              - endpoint: /number
+                params:
+                  lat: 48.11
+                  lng: 11.57
+                  element: bar
+                  radius: 500
+              - endpoint: /distance
+                params:
+                  lat: 48.11
+                  lng: 11.57
+                  element: bar
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Features'
+              example:
+                features:
+                - name: number_bar_radius_500m
+                  value: 24
+                - name: distance_bar_m
+                  value: 123
+          description: success
+      tags:
+      - multiple_features
+      x-code-samples:
+      - lang: Python
+        source: "import requests\n\nurl = \"https://api.features4.com/v1/features\"\
+          \n\nauth = (\"API_TEST_KEY\", \"\")\n\njson = {\n  \"features\": [\n   \
+          \ {\n      \"endpoint\": \"/number\",\n      \"params\": {\n        \"lat\"\
+          : 48.11,\n        \"lng\": 11.57,\n        \"element\": \"bar\",\n     \
+          \   \"radius\": 500\n      }\n    },\n    {\n      \"endpoint\": \"/distance\"\
+          ,\n      \"params\": {\n        \"lat\": 48.11,\n        \"lng\": 11.57,\n\
+          \        \"element\": \"bar\"\n      }\n    }\n  ]\n}\n\nr = requests.post(\n\
+          \  url=url,\n  json=json,\n  auth=auth\n)\n\nr.json()"
+      - lang: R
+        source: "library(httr)\nlibrary(jsonlite)\n\nurl <- \"https://api.features4.com/v1/features\"\
+          \n\njson <- '{\n  \"features\": [\n    {\n      \"endpoint\": \"/number\"\
+          ,\n      \"params\": {\n        \"lat\": 48.11,\n        \"lng\": 11.57,\n\
+          \        \"element\": \"bar\",\n        \"radius\": 500\n      }\n    },\n\
+          \    {\n      \"endpoint\": \"/distance\",\n      \"params\": {\n      \
+          \  \"lat\": 48.11,\n        \"lng\": 11.57,\n        \"element\": \"bar\"\
+          \n      }\n    }\n  ]\n}'\n\nbody <- fromJSON(\n  json,\n  simplifyDataFrame\
+          \ = FALSE\n)\n\nr <- POST(\n  url = url,\n  body = body,\n  encode = \"\
+          json\",\n  authenticate(\"API_TEST_KEY\", \"\")\n)\n\ncontent(r)"
+      - lang: Shell
+        source: "curl https://api.features4.com/v1/features \\\n  -u API_TEST_KEY:\
+          \ \\\n  -H \"Content-Type: application/json\" \\\n  -d '{\"features\": [{\"\
+          endpoint\": \"/number\", \"params\": {\"lat\": 48.11, \"lng\": 11.57, \"\
+          element\": \"bar\", \"radius\": 500}}, {\"endpoint\": \"/distance\", \"\
+          params\": {\"lat\": 48.11, \"lng\": 11.57, \"element\": \"bar\"}}]}'"
+  /living:
+    post:
+      operationId: Living
+      description: Access a list of preselected features
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Living'
+            example:
+              lat: 48.11
+              lng: 11.57
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Living'
+              example:
+                features:
+                - name: distance_doctors_m
+                  value: 320
+                - name: distance_school_m
+                  value: 55
+                - name: distance_kindergarten_m
+                  value: 240
+                - name: distance_cinema_m
+                  value: 274
+                - name: distance_prison_m
+                  value: 111
+                - name: number_restaurant_radius_500m
+                  value: 3
+                - name: number_restaurant_radius_1000m
+                  value: 10
+                - name: number_supermarket_radius_1000m
+                  value: 9
+                - name: number_supermarket_radius_2000m
+                  value: 12
+                - name: number_convenience_radius_2000m
+                  value: 22
+          description: success
+      tags:
+      - preset_features
+      x-code-samples:
+      - lang: Python
+        source: "import requests\n\nurl = \"https://api.features4.com/v1/living\"\n\
+          \nauth = (\"API_TEST_KEY\", \"\")\n\njson = {\n  \"lat\": 48.11,\n  \"lng\"\
+          : 11.57\n}\n\nr = requests.post(\n  url=url,\n  json=json,\n  auth=auth\n\
+          )\n\nr.json()"
+      - lang: R
+        source: "library(httr)\nlibrary(jsonlite)\n\nurl <- \"https://api.features4.com/v1/living\"\
+          \n\njson <- '{\n  \"lat\": 48.11,\n  \"lng\": 11.57\n}'\n\nbody <- fromJSON(\n\
+          \  json,\n  simplifyDataFrame = FALSE\n)\n\nr <- POST(\n  url = url,\n \
+          \ body = body,\n  encode = \"json\",\n  authenticate(\"API_TEST_KEY\", \"\
+          \")\n)\n\ncontent(r)"
+      - lang: Shell
+        source: "curl https://api.features4.com/v1/living \\\n  -u API_TEST_KEY: \\\
+          \n  -H \"Content-Type: application/json\" \\\n  -d '{\"lat\": 48.11, \"\
+          lng\": 11.57}'"
+  /elements:
+    post:
+      operationId: ValidElements
+      description: A list of map elements that can be used in features
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ValidElements'
+            example:
+              lat: 48.11
+              lng: 11.57
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidElements'
+              example:
+                elements:
+                - bar
+                - restaurant
+                - taxi
+                - atm
+          description: success
+      tags:
+      - utils
+      x-code-samples:
+      - lang: Python
+        source: "import requests\n\nurl = \"https://api.features4.com/v1/elements\"\
+          \n\nauth = (\"API_TEST_KEY\", \"\")\n\njson = {\n  \"lat\": 48.11,\n  \"\
+          lng\": 11.57\n}\n\nr = requests.post(\n  url=url,\n  json=json,\n  auth=auth\n\
+          )\n\nr.json()"
+      - lang: R
+        source: "library(httr)\nlibrary(jsonlite)\n\nurl <- \"https://api.features4.com/v1/elements\"\
+          \n\njson <- '{\n  \"lat\": 48.11,\n  \"lng\": 11.57\n}'\n\nbody <- fromJSON(\n\
+          \  json,\n  simplifyDataFrame = FALSE\n)\n\nr <- POST(\n  url = url,\n \
+          \ body = body,\n  encode = \"json\",\n  authenticate(\"API_TEST_KEY\", \"\
+          \")\n)\n\ncontent(r)"
+      - lang: Shell
+        source: "curl https://api.features4.com/v1/elements \\\n  -u API_TEST_KEY:\
+          \ \\\n  -H \"Content-Type: application/json\" \\\n  -d '{\"lat\": 48.11,\
+          \ \"lng\": 11.57}'"
+components:
+  schemas:
+    Number:
+      type: object
+      properties:
+        name:
+          type: string
+          readOnly: true
+          description: Name of the feature
+        value:
+          type: number
+          readOnly: true
+          description: Value of the feature
+        lat:
+          type: number
+          maximum: 90
+          minimum: -90
+          writeOnly: true
+          description: Latitude (i.e. north-south coordinate) of your location of
+            interest in degrees.
+        lng:
+          type: number
+          maximum: 180
+          minimum: -180
+          writeOnly: true
+          description: Longitude (i.e. east-west coordinate) of your location of interest
+            in degrees.
+        element:
+          enum:
+          - restaurant
+          - bar
+          - pub
+          - fast_food
+          - ice_cream
+          - kindergarten
+          - college
+          - school
+          - university
+          - charging_station
+          - fuel
+          - parking
+          - taxi
+          - bank
+          - atm
+          - clinic
+          - doctors
+          - dentist
+          - hospital
+          - pharmacy
+          - arts_centre
+          - casino
+          - cinema
+          - theatre
+          - marketplace
+          - place_of_worship
+          - police
+          - post_box
+          - prison
+          - recycling
+          - toilets
+          - fire_station
+          - convenience
+          - supermarket
+          - clothes
+          - hairdresser
+          - bakery
+          - car_repair
+          - car
+          - kiosk
+          - beauty
+          - hardware
+          - butcher
+          - furniture
+          - mobile_phone
+          - florist
+          - electronics
+          - shoes
+          - alcohol
+          - car_parts
+          - mail
+          - doityourself
+          - office
+          - public_transport
+          - road
+          - leisure
+          type: string
+          writeOnly: true
+          description: The map element to analyze.
+        radius:
+          type: integer
+          maximum: 5000
+          minimum: 1
+          writeOnly: true
+          description: Radius around the location of interest in meters.
+      required:
+      - lat
+      - lng
+      - element
+      - radius
+    Distance:
+      type: object
+      properties:
+        name:
+          type: string
+          readOnly: true
+          description: Name of the feature
+        value:
+          type: number
+          readOnly: true
+          description: Value of the feature
+        lat:
+          type: number
+          maximum: 90
+          minimum: -90
+          writeOnly: true
+          description: Latitude (i.e. north-south coordinate) of your location of
+            interest in degrees.
+        lng:
+          type: number
+          maximum: 180
+          minimum: -180
+          writeOnly: true
+          description: Longitude (i.e. east-west coordinate) of your location of interest
+            in degrees.
+        element:
+          enum:
+          - restaurant
+          - bar
+          - pub
+          - fast_food
+          - ice_cream
+          - kindergarten
+          - college
+          - school
+          - university
+          - charging_station
+          - fuel
+          - parking
+          - taxi
+          - bank
+          - atm
+          - clinic
+          - doctors
+          - dentist
+          - hospital
+          - pharmacy
+          - arts_centre
+          - casino
+          - cinema
+          - theatre
+          - marketplace
+          - place_of_worship
+          - police
+          - post_box
+          - prison
+          - recycling
+          - toilets
+          - fire_station
+          - convenience
+          - supermarket
+          - clothes
+          - hairdresser
+          - bakery
+          - car_repair
+          - car
+          - kiosk
+          - beauty
+          - hardware
+          - butcher
+          - furniture
+          - mobile_phone
+          - florist
+          - electronics
+          - shoes
+          - alcohol
+          - car_parts
+          - mail
+          - doityourself
+          - office
+          - public_transport
+          - road
+          - leisure
+          type: string
+          writeOnly: true
+          description: The map element to analyze.
+      required:
+      - lat
+      - lng
+      - element
+    Features:
+      type: object
+      properties:
+        features:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+                readOnly: true
+                description: Name of the feature
+              value:
+                type: number
+                readOnly: true
+                description: Value of the feature
+              endpoint:
+                enum:
+                - /number
+                - /distance
+                type: string
+                writeOnly: true
+                description: The endpoint url for the individual feature.
+              params:
+                oneOf:
+                - $ref: '#/components/schemas/Number'
+                - $ref: '#/components/schemas/Distance'
+                writeOnly: true
+                description: The parameters you would pass to the individual feature.
+            required:
+            - endpoint
+            - params
+          description: An array with an entry for each feature you request
+      required:
+      - features
+    Living:
+      type: object
+      properties:
+        lat:
+          type: number
+          maximum: 90
+          minimum: -90
+          writeOnly: true
+          description: Latitude (i.e. north-south coordinate) of your location of
+            interest in degrees.
+        lng:
+          type: number
+          maximum: 180
+          minimum: -180
+          writeOnly: true
+          description: Longitude (i.e. east-west coordinate) of your location of interest
+            in degrees.
+        features:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+                readOnly: true
+                description: Name of the feature
+              value:
+                type: number
+                readOnly: true
+                description: Value of the feature
+              endpoint:
+                enum:
+                - /number
+                - /distance
+                type: string
+                writeOnly: true
+                description: The endpoint url for the individual feature.
+              params:
+                oneOf:
+                - $ref: '#/components/schemas/Number'
+                - $ref: '#/components/schemas/Distance'
+                writeOnly: true
+                description: The parameters you would pass to the individual feature.
+            required:
+            - endpoint
+            - params
+          readOnly: true
+          description: An array with an entry for each feature you request
+        max_features:
+          type: integer
+          minimum: 1
+          writeOnly: true
+          description: The maximum number of features you would like to retrieve
+      required:
+      - lat
+      - lng
+    ValidElements:
+      type: object
+      properties:
+        lat:
+          type: number
+          maximum: 90
+          minimum: -90
+          writeOnly: true
+          description: Latitude (i.e. north-south coordinate) of your location of
+            interest in degrees.
+        lng:
+          type: number
+          maximum: 180
+          minimum: -180
+          writeOnly: true
+          description: Longitude (i.e. east-west coordinate) of your location of interest
+            in degrees.
+        elements:
+          type: array
+          items:
+            type: string
+          readOnly: true
+      required:
+      - lat
+      - lng
+  securitySchemes:
+    BasicAuthentication:
+      type: http
+      scheme: basic
+servers:
+- url: https://api.features4.com/v1
+security:
+- BasicAuthentication: []
+tags:
+- name: features
+  x-displayName: Features
+  description: "Features4 provides many spatial features. Every\nfeature can be accessed\
+    \ on its own with its own endpoint. For example the\n`Number of elements within\
+    \ a radius` feature can be accessed at `/number`.\n\nIf you need to retrieve multiple\
+    \ features for a location, you can simply\nperform a request for each of them.\
+    \ However, we additionally offer [\nresources](#tag/features_multiple) to conveniently\
+    \ request multiple features\nat the same time. "
+- name: multiple_features
+  x-displayName: Multiple Features
+  description: "These resources make it easy to access\nmultiple features for a given\
+    \ location at the same time. The most flexible\nway is provided using the [/features\
+    \ resource](\n#operation/Multiple%20Features) "
+- name: preset_features
+  x-displayName: Feature Presets
+  description: |-
+    These resources give you access to the most
+    common sets of features to extract for spatial locations.
+- name: utils
+  x-displayName: Utilities
+  description: Endpoints for utility functions.
+x-tagGroups:
+- name: features
+  x-displayName: Features
+  tags:
+  - features
+  - multiple_features
+  - preset_features
+- name: utils
+  x-displayName: Utilities
+  tags:
+  - utils

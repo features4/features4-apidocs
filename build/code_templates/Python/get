@@ -1,0 +1,16 @@
+import requests
+
+url = '{{ base_url }}/{{ endpoint }}'
+
+# set api key as basic auth username
+auth = ('{{api_key}}', '')
+
+params = {{params|to_nice_json}}
+
+r = requests.get(
+  url=url,
+  params=params,
+  auth=auth
+)
+
+r.json()

@@ -1,0 +1,40 @@
+# See https://docs.redoc.ly/cli/configuration/ for more information.
+apiDefinitions:
+  main: "openapi/openapi.yaml"
+lint:
+  rules:
+    no-unused-schemas: warning
+referenceDocs:
+  htmlTemplate: ./docs/index.html
+  jsonSampleExpandLevel: all
+  hideDownloadButton: true
+  noAutoAuth: true
+  hideSingleRequestSampleTab: true
+  theme:
+    schema:
+      defaultDetailsWidth: "80%"
+      labelsTextSize: "0.7em"
+    colors:
+      primary:
+        main: "#2d7f83"
+      http:
+        get: "#2d7f83"
+        post: "#58738D"
+      error:
+        main: "#888888"
+      responses:
+        success:
+          backgroundColor: "transparent"
+    typography:
+      fontFamily: "Lato"
+      fontSize: "16px"
+      headings:
+        fontFamily: "Lato"
+      code:
+        fontSize: "13px"
+        fontFamily: "monospace"
+    sidebar:
+      textColor: "#606770"
+      backgroundColor: "#FCFCFC"
+    logo:
+      maxHeight: "50px"

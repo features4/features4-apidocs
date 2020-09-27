@@ -1,0 +1,15 @@
+import requests
+
+url = "{{base_url}}/{{endpoint}}"
+
+auth = ("{{api_key}}", "")
+
+json = {{params|to_nice_json}}
+
+r = requests.post(
+  url=url,
+  json=json,
+  auth=auth
+)
+
+r.json()

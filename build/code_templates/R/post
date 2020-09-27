@@ -1,0 +1,20 @@
+library(httr)
+library(jsonlite)
+
+url <- "{{base_url}}/{{endpoint}}"
+
+json <- '{{params|to_nice_json}}'
+
+body <- fromJSON(
+  json,
+  simplifyDataFrame = FALSE
+)
+
+r <- POST(
+  url = url,
+  body = body,
+  encode = "json",
+  authenticate("{{api_key}}", "")
+)
+
+content(r)
