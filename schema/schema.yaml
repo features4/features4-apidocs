@@ -52,24 +52,26 @@ info:
     \ |\n\nYou can also view your personal feature limit, the number of features requested\
     \ so far, and how many features you still have available in your [dashboard](https://dashboard.features4.com).\n\
     \nEach feature you request counts towards your personal feature limit. So, for\
-    \ example, if you make one request to the `number` resource it counts\nas 1 feature.\
-    \ If you make a request to the multiple `features` resource the number of features\
-    \ depends. If you request 5 features, these 5 features are\ncounted towards your\
-    \ feature limit.\n\n# API responses\nAll responses from the API have a JSON respone\
-    \ body.\n\n## HTTP status codes\nFeatures4 uses standard HTTP response codes in\
-    \ the response header to indicate the success or failure of an API request.\n\n\
-    In general:\n\n- Codes in the `2xx` range indicate success.\n- Codes in the `4xx`\
-    \ range indicate an error that failed given the information provided (e.g., a\
-    \ required parameter was omitted, falsely specified, etc.).\n- Codes in the `5xx`\
-    \ range indicate an error with Features4's servers (these are rare).\n\n| HTTP\
-    \ code | Description |\n| --- | --- |\n| `200` - OK | Everything worked as expected.\
-    \ |\n| | |\n| `400` - Bad Request |\tThe request could not be completed, often\
-    \ due to a missing required parameter. [Learn more](#parameter-validation-error)|\n\
+    \ example, if you make one request to an endpoint that returns one individual\
+    \ feature such as the `number` resource it counts\nas 1 feature. If you make a\
+    \ request to an endpoint that can return multiple features, e.g. the `features`\
+    \ resource the number of features depends on your specific request. If you request\
+    \ 5 features, these 5 features are\ncounted towards your feature limit.\n\n# API\
+    \ responses\nFor consistency and ease of usage all responses from the Features4\
+    \ API have a JSON response body.\n\n## HTTP status codes\nFeatures4 uses standard\
+    \ HTTP response codes in the response header to indicate the success or failure\
+    \ of an API request.\n\nIn general:\n\n- Codes in the `2xx` range indicate success.\n\
+    - Codes in the `4xx` range indicate an error due to the information provided (e.g.,\
+    \ a required parameter was omitted, falsely specified, etc.).\n- Codes in the\
+    \ `5xx` range indicate an error with Features4's servers (these are rare).\n\n\
+    | HTTP code | Description |\n| --- | --- |\n| `200` - OK | Everything worked as\
+    \ expected. |\n| | |\n| `400` - Bad Request |\tThe request could not be completed,\
+    \ often due to a missing required parameter. [Learn more](#parameter-validation-error)|\n\
     | `401` - Unauthorized |\tThe request could not be authenticated succesfully.\
     \ [Learn more](#section/Introduction/Authentication)|\n| `402` - Request Failed\
     \ |\tThe parameters were valid but the request failed. |\n| `403` - Forbidden\
-    \ |\tThe API key doesn't have permissions to perform the request. |\n| `404` -\
-    \ Not Found |\tThe requested resource doesn't exist (often a typo).|\n| `405`\
+    \ |\tThe API key doesn't carry permissions to perform the request. |\n| `404`\
+    \ - Not Found |\tThe requested resource doesn't exist (often a typo).|\n| `405`\
     \ - Method not Allowed | A request was made with a method that is not supported.\
     \ |\n| `415` - Unsupported Media Type | A POST request was made without a `Content-Type:\
     \ application/json` header.\n| `429` - Too Many Requests |\tThe personal feature\
@@ -78,7 +80,7 @@ info:
     \ Feature4's end. (These are rare.) |\n\nFeatures4 uses one custom status code\
     \ `419` to indicate that currently there is no data available for the country\
     \ specified by a given location.\n\n## Errors\nIn addition to the HTTP status\
-    \ code in the response header, most errors response body contains a `message`\
+    \ code in the response header, most errors response bodies contain a `message`\
     \ field with more error details in human-readable form, and\na `code` field which\
     \ can be used to handle errors programmatically.\n\n### Authentication error\n\
     For authentication errors, Features4 returns the HTTP `401 - Unauthorized` status\
@@ -94,6 +96,21 @@ info:
     \ of features exceeds your feature limit. Number of currently available features:\
     \ 4\",\n    \"code\": \"feature_limit_exceeded\"\n  }\n}\n```\n"
 paths:
+  /geocode:
+    get:
+      operationId: listGeocodes
+      description: A simple endpoint proxying requests to Nominatim
+      parameters: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items: {}
+          description: ''
+      tags:
+      - geocode
   /number:
     post:
       operationId: Number
@@ -107,8 +124,9 @@ paths:
             schema:
               $ref: '#/components/schemas/Number'
             example:
-              lat: 48.11
-              lng: 11.57
+              location:
+                lat: 48.11
+                lng: 11.57
               element: bar
               radius: 500
       responses:
@@ -126,19 +144,21 @@ paths:
       x-code-samples:
       - lang: Python
         source: "import requests\n\nurl = \"https://api.features4.com/v1/number\"\n\
-          \nauth = (\"API_TEST_KEY\", \"\")\n\njson = {\n  \"lat\": 48.11,\n  \"lng\"\
-          : 11.57,\n  \"element\": \"bar\",\n  \"radius\": 500\n}\n\nr = requests.post(\n\
-          \  url=url,\n  json=json,\n  auth=auth\n)\n\nr.json()"
+          \nauth = (\"API_TEST_KEY\", \"\")\n\njson = {\n  \"location\": {\n    \"\
+          lat\": 48.11,\n    \"lng\": 11.57\n  },\n  \"element\": \"bar\",\n  \"radius\"\
+          : 500\n}\n\nr = requests.post(\n  url=url,\n  json=json,\n  auth=auth\n\
+          )\n\nr.json()"
       - lang: R
         source: "library(httr)\nlibrary(jsonlite)\n\nurl <- \"https://api.features4.com/v1/number\"\
-          \n\njson <- '{\n  \"lat\": 48.11,\n  \"lng\": 11.57,\n  \"element\": \"\
-          bar\",\n  \"radius\": 500\n}'\n\nbody <- fromJSON(\n  json,\n  simplifyDataFrame\
-          \ = FALSE\n)\n\nr <- POST(\n  url = url,\n  body = body,\n  encode = \"\
-          json\",\n  authenticate(\"API_TEST_KEY\", \"\")\n)\n\ncontent(r)"
+          \n\njson <- '{\n  \"location\": {\n    \"lat\": 48.11,\n    \"lng\": 11.57\n\
+          \  },\n  \"element\": \"bar\",\n  \"radius\": 500\n}'\n\nbody <- fromJSON(\n\
+          \  json,\n  simplifyDataFrame = FALSE\n)\n\nr <- POST(\n  url = url,\n \
+          \ body = body,\n  encode = \"json\",\n  authenticate(\"API_TEST_KEY\", \"\
+          \")\n)\n\ncontent(r)"
       - lang: Shell
         source: "curl https://api.features4.com/v1/number \\\n  -u API_TEST_KEY: \\\
-          \n  -H \"Content-Type: application/json\" \\\n  -d '{\"lat\": 48.11, \"\
-          lng\": 11.57, \"element\": \"bar\", \"radius\": 500}'"
+          \n  -H \"Content-Type: application/json\" \\\n  -d '{\"location\": {\"lat\"\
+          : 48.11, \"lng\": 11.57}, \"element\": \"bar\", \"radius\": 500}'"
   /distance:
     post:
       operationId: Distance
@@ -150,8 +170,9 @@ paths:
             schema:
               $ref: '#/components/schemas/Distance'
             example:
-              lat: 48.11
-              lng: 11.57
+              location:
+                lat: 48.11
+                lng: 11.57
               element: bar
       responses:
         '200':
@@ -168,19 +189,19 @@ paths:
       x-code-samples:
       - lang: Python
         source: "import requests\n\nurl = \"https://api.features4.com/v1/distance\"\
-          \n\nauth = (\"API_TEST_KEY\", \"\")\n\njson = {\n  \"lat\": 48.11,\n  \"\
-          lng\": 11.57,\n  \"element\": \"bar\"\n}\n\nr = requests.post(\n  url=url,\n\
-          \  json=json,\n  auth=auth\n)\n\nr.json()"
+          \n\nauth = (\"API_TEST_KEY\", \"\")\n\njson = {\n  \"location\": {\n   \
+          \ \"lat\": 48.11,\n    \"lng\": 11.57\n  },\n  \"element\": \"bar\"\n}\n\
+          \nr = requests.post(\n  url=url,\n  json=json,\n  auth=auth\n)\n\nr.json()"
       - lang: R
         source: "library(httr)\nlibrary(jsonlite)\n\nurl <- \"https://api.features4.com/v1/distance\"\
-          \n\njson <- '{\n  \"lat\": 48.11,\n  \"lng\": 11.57,\n  \"element\": \"\
-          bar\"\n}'\n\nbody <- fromJSON(\n  json,\n  simplifyDataFrame = FALSE\n)\n\
-          \nr <- POST(\n  url = url,\n  body = body,\n  encode = \"json\",\n  authenticate(\"\
-          API_TEST_KEY\", \"\")\n)\n\ncontent(r)"
+          \n\njson <- '{\n  \"location\": {\n    \"lat\": 48.11,\n    \"lng\": 11.57\n\
+          \  },\n  \"element\": \"bar\"\n}'\n\nbody <- fromJSON(\n  json,\n  simplifyDataFrame\
+          \ = FALSE\n)\n\nr <- POST(\n  url = url,\n  body = body,\n  encode = \"\
+          json\",\n  authenticate(\"API_TEST_KEY\", \"\")\n)\n\ncontent(r)"
       - lang: Shell
         source: "curl https://api.features4.com/v1/distance \\\n  -u API_TEST_KEY:\
-          \ \\\n  -H \"Content-Type: application/json\" \\\n  -d '{\"lat\": 48.11,\
-          \ \"lng\": 11.57, \"element\": \"bar\"}'"
+          \ \\\n  -H \"Content-Type: application/json\" \\\n  -d '{\"location\": {\"\
+          lat\": 48.11, \"lng\": 11.57}, \"element\": \"bar\"}'"
   /features:
     post:
       operationId: Features
@@ -195,14 +216,16 @@ paths:
               features:
               - endpoint: /number
                 params:
-                  lat: 48.11
-                  lng: 11.57
+                  location:
+                    lat: 48.11
+                    lng: 11.57
                   element: bar
                   radius: 500
               - endpoint: /distance
                 params:
-                  lat: 48.11
-                  lng: 11.57
+                  location:
+                    lat: 48.11
+                    lng: 11.57
                   element: bar
       responses:
         '200':
@@ -223,32 +246,35 @@ paths:
       - lang: Python
         source: "import requests\n\nurl = \"https://api.features4.com/v1/features\"\
           \n\nauth = (\"API_TEST_KEY\", \"\")\n\njson = {\n  \"features\": [\n   \
-          \ {\n      \"endpoint\": \"/number\",\n      \"params\": {\n        \"lat\"\
-          : 48.11,\n        \"lng\": 11.57,\n        \"element\": \"bar\",\n     \
-          \   \"radius\": 500\n      }\n    },\n    {\n      \"endpoint\": \"/distance\"\
-          ,\n      \"params\": {\n        \"lat\": 48.11,\n        \"lng\": 11.57,\n\
-          \        \"element\": \"bar\"\n      }\n    }\n  ]\n}\n\nr = requests.post(\n\
-          \  url=url,\n  json=json,\n  auth=auth\n)\n\nr.json()"
+          \ {\n      \"endpoint\": \"/number\",\n      \"params\": {\n        \"location\"\
+          : {\n          \"lat\": 48.11,\n          \"lng\": 11.57\n        },\n \
+          \       \"element\": \"bar\",\n        \"radius\": 500\n      }\n    },\n\
+          \    {\n      \"endpoint\": \"/distance\",\n      \"params\": {\n      \
+          \  \"location\": {\n          \"lat\": 48.11,\n          \"lng\": 11.57\n\
+          \        },\n        \"element\": \"bar\"\n      }\n    }\n  ]\n}\n\nr =\
+          \ requests.post(\n  url=url,\n  json=json,\n  auth=auth\n)\n\nr.json()"
       - lang: R
         source: "library(httr)\nlibrary(jsonlite)\n\nurl <- \"https://api.features4.com/v1/features\"\
           \n\njson <- '{\n  \"features\": [\n    {\n      \"endpoint\": \"/number\"\
-          ,\n      \"params\": {\n        \"lat\": 48.11,\n        \"lng\": 11.57,\n\
-          \        \"element\": \"bar\",\n        \"radius\": 500\n      }\n    },\n\
-          \    {\n      \"endpoint\": \"/distance\",\n      \"params\": {\n      \
-          \  \"lat\": 48.11,\n        \"lng\": 11.57,\n        \"element\": \"bar\"\
-          \n      }\n    }\n  ]\n}'\n\nbody <- fromJSON(\n  json,\n  simplifyDataFrame\
+          ,\n      \"params\": {\n        \"location\": {\n          \"lat\": 48.11,\n\
+          \          \"lng\": 11.57\n        },\n        \"element\": \"bar\",\n \
+          \       \"radius\": 500\n      }\n    },\n    {\n      \"endpoint\": \"\
+          /distance\",\n      \"params\": {\n        \"location\": {\n          \"\
+          lat\": 48.11,\n          \"lng\": 11.57\n        },\n        \"element\"\
+          : \"bar\"\n      }\n    }\n  ]\n}'\n\nbody <- fromJSON(\n  json,\n  simplifyDataFrame\
           \ = FALSE\n)\n\nr <- POST(\n  url = url,\n  body = body,\n  encode = \"\
           json\",\n  authenticate(\"API_TEST_KEY\", \"\")\n)\n\ncontent(r)"
       - lang: Shell
         source: "curl https://api.features4.com/v1/features \\\n  -u API_TEST_KEY:\
           \ \\\n  -H \"Content-Type: application/json\" \\\n  -d '{\"features\": [{\"\
-          endpoint\": \"/number\", \"params\": {\"lat\": 48.11, \"lng\": 11.57, \"\
-          element\": \"bar\", \"radius\": 500}}, {\"endpoint\": \"/distance\", \"\
-          params\": {\"lat\": 48.11, \"lng\": 11.57, \"element\": \"bar\"}}]}'"
-  /living:
+          endpoint\": \"/number\", \"params\": {\"location\": {\"lat\": 48.11, \"\
+          lng\": 11.57}, \"element\": \"bar\", \"radius\": 500}}, {\"endpoint\": \"\
+          /distance\", \"params\": {\"location\": {\"lat\": 48.11, \"lng\": 11.57},\
+          \ \"element\": \"bar\"}}]}'"
+  /presets/living:
     post:
       operationId: Living
-      description: Access a list of preselected features
+      description: A preset of features related to the quality of the living situation.
       parameters: []
       requestBody:
         content:
@@ -256,8 +282,9 @@ paths:
             schema:
               $ref: '#/components/schemas/Living'
             example:
-              lat: 48.11
-              lng: 11.57
+              location:
+                lat: 48.11
+                lng: 11.57
       responses:
         '200':
           content:
@@ -291,20 +318,20 @@ paths:
       - preset_features
       x-code-samples:
       - lang: Python
-        source: "import requests\n\nurl = \"https://api.features4.com/v1/living\"\n\
-          \nauth = (\"API_TEST_KEY\", \"\")\n\njson = {\n  \"lat\": 48.11,\n  \"lng\"\
-          : 11.57\n}\n\nr = requests.post(\n  url=url,\n  json=json,\n  auth=auth\n\
-          )\n\nr.json()"
+        source: "import requests\n\nurl = \"https://api.features4.com/v1/presets/living\"\
+          \n\nauth = (\"API_TEST_KEY\", \"\")\n\njson = {\n  \"location\": {\n   \
+          \ \"lat\": 48.11,\n    \"lng\": 11.57\n  }\n}\n\nr = requests.post(\n  url=url,\n\
+          \  json=json,\n  auth=auth\n)\n\nr.json()"
       - lang: R
-        source: "library(httr)\nlibrary(jsonlite)\n\nurl <- \"https://api.features4.com/v1/living\"\
-          \n\njson <- '{\n  \"lat\": 48.11,\n  \"lng\": 11.57\n}'\n\nbody <- fromJSON(\n\
-          \  json,\n  simplifyDataFrame = FALSE\n)\n\nr <- POST(\n  url = url,\n \
-          \ body = body,\n  encode = \"json\",\n  authenticate(\"API_TEST_KEY\", \"\
-          \")\n)\n\ncontent(r)"
+        source: "library(httr)\nlibrary(jsonlite)\n\nurl <- \"https://api.features4.com/v1/presets/living\"\
+          \n\njson <- '{\n  \"location\": {\n    \"lat\": 48.11,\n    \"lng\": 11.57\n\
+          \  }\n}'\n\nbody <- fromJSON(\n  json,\n  simplifyDataFrame = FALSE\n)\n\
+          \nr <- POST(\n  url = url,\n  body = body,\n  encode = \"json\",\n  authenticate(\"\
+          API_TEST_KEY\", \"\")\n)\n\ncontent(r)"
       - lang: Shell
-        source: "curl https://api.features4.com/v1/living \\\n  -u API_TEST_KEY: \\\
-          \n  -H \"Content-Type: application/json\" \\\n  -d '{\"lat\": 48.11, \"\
-          lng\": 11.57}'"
+        source: "curl https://api.features4.com/v1/presets/living \\\n  -u API_TEST_KEY:\
+          \ \\\n  -H \"Content-Type: application/json\" \\\n  -d '{\"location\": {\"\
+          lat\": 48.11, \"lng\": 11.57}}'"
   /elements:
     post:
       operationId: ValidElements
@@ -316,8 +343,9 @@ paths:
             schema:
               $ref: '#/components/schemas/ValidElements'
             example:
-              lat: 48.11
-              lng: 11.57
+              location:
+                lat: 48.11
+                lng: 11.57
       responses:
         '200':
           content:
@@ -336,19 +364,19 @@ paths:
       x-code-samples:
       - lang: Python
         source: "import requests\n\nurl = \"https://api.features4.com/v1/elements\"\
-          \n\nauth = (\"API_TEST_KEY\", \"\")\n\njson = {\n  \"lat\": 48.11,\n  \"\
-          lng\": 11.57\n}\n\nr = requests.post(\n  url=url,\n  json=json,\n  auth=auth\n\
-          )\n\nr.json()"
+          \n\nauth = (\"API_TEST_KEY\", \"\")\n\njson = {\n  \"location\": {\n   \
+          \ \"lat\": 48.11,\n    \"lng\": 11.57\n  }\n}\n\nr = requests.post(\n  url=url,\n\
+          \  json=json,\n  auth=auth\n)\n\nr.json()"
       - lang: R
         source: "library(httr)\nlibrary(jsonlite)\n\nurl <- \"https://api.features4.com/v1/elements\"\
-          \n\njson <- '{\n  \"lat\": 48.11,\n  \"lng\": 11.57\n}'\n\nbody <- fromJSON(\n\
-          \  json,\n  simplifyDataFrame = FALSE\n)\n\nr <- POST(\n  url = url,\n \
-          \ body = body,\n  encode = \"json\",\n  authenticate(\"API_TEST_KEY\", \"\
-          \")\n)\n\ncontent(r)"
+          \n\njson <- '{\n  \"location\": {\n    \"lat\": 48.11,\n    \"lng\": 11.57\n\
+          \  }\n}'\n\nbody <- fromJSON(\n  json,\n  simplifyDataFrame = FALSE\n)\n\
+          \nr <- POST(\n  url = url,\n  body = body,\n  encode = \"json\",\n  authenticate(\"\
+          API_TEST_KEY\", \"\")\n)\n\ncontent(r)"
       - lang: Shell
         source: "curl https://api.features4.com/v1/elements \\\n  -u API_TEST_KEY:\
-          \ \\\n  -H \"Content-Type: application/json\" \\\n  -d '{\"lat\": 48.11,\
-          \ \"lng\": 11.57}'"
+          \ \\\n  -H \"Content-Type: application/json\" \\\n  -d '{\"location\": {\"\
+          lat\": 48.11, \"lng\": 11.57}}'"
 components:
   schemas:
     Number:
@@ -362,20 +390,11 @@ components:
           type: number
           readOnly: true
           description: Value of the feature
-        lat:
-          type: number
-          maximum: 90
-          minimum: -90
+        location:
+          oneOf:
+          - $ref: '#/components/schemas/LatLng'
+          - $ref: '#/components/schemas/Address'
           writeOnly: true
-          description: Latitude (i.e. north-south coordinate) of your location of
-            interest in degrees.
-        lng:
-          type: number
-          maximum: 180
-          minimum: -180
-          writeOnly: true
-          description: Longitude (i.e. east-west coordinate) of your location of interest
-            in degrees.
         element:
           enum:
           - restaurant
@@ -444,8 +463,7 @@ components:
           writeOnly: true
           description: Radius around the location of interest in meters.
       required:
-      - lat
-      - lng
+      - location
       - element
       - radius
     Distance:
@@ -459,20 +477,11 @@ components:
           type: number
           readOnly: true
           description: Value of the feature
-        lat:
-          type: number
-          maximum: 90
-          minimum: -90
+        location:
+          oneOf:
+          - $ref: '#/components/schemas/LatLng'
+          - $ref: '#/components/schemas/Address'
           writeOnly: true
-          description: Latitude (i.e. north-south coordinate) of your location of
-            interest in degrees.
-        lng:
-          type: number
-          maximum: 180
-          minimum: -180
-          writeOnly: true
-          description: Longitude (i.e. east-west coordinate) of your location of interest
-            in degrees.
         element:
           enum:
           - restaurant
@@ -535,8 +544,7 @@ components:
           writeOnly: true
           description: The map element to analyze.
       required:
-      - lat
-      - lng
+      - location
       - element
     Features:
       type: object
@@ -576,20 +584,11 @@ components:
     Living:
       type: object
       properties:
-        lat:
-          type: number
-          maximum: 90
-          minimum: -90
+        location:
+          oneOf:
+          - $ref: '#/components/schemas/LatLng'
+          - $ref: '#/components/schemas/Address'
           writeOnly: true
-          description: Latitude (i.e. north-south coordinate) of your location of
-            interest in degrees.
-        lng:
-          type: number
-          maximum: 180
-          minimum: -180
-          writeOnly: true
-          description: Longitude (i.e. east-west coordinate) of your location of interest
-            in degrees.
         features:
           type: array
           items:
@@ -627,9 +626,23 @@ components:
           writeOnly: true
           description: The maximum number of features you would like to retrieve
       required:
-      - lat
-      - lng
+      - location
     ValidElements:
+      type: object
+      properties:
+        location:
+          oneOf:
+          - $ref: '#/components/schemas/LatLng'
+          - $ref: '#/components/schemas/Address'
+          writeOnly: true
+        elements:
+          type: array
+          items:
+            type: string
+          readOnly: true
+      required:
+      - location
+    LatLng:
       type: object
       properties:
         lat:
@@ -646,14 +659,13 @@ components:
           writeOnly: true
           description: Longitude (i.e. east-west coordinate) of your location of interest
             in degrees.
-        elements:
-          type: array
-          items:
-            type: string
-          readOnly: true
-      required:
-      - lat
-      - lng
+    Address:
+      type: object
+      properties:
+        address:
+          type: string
+          writeOnly: true
+          description: The address of your location of interest
   securitySchemes:
     BasicAuthentication:
       type: http
@@ -666,11 +678,11 @@ tags:
 - name: features
   x-displayName: Features
   description: "Features4 provides many spatial features. Every\nfeature can be accessed\
-    \ on its own with its own endpoint. For example the\n`Number of elements within\
-    \ a radius` feature can be accessed at `/number`.\n\nIf you need to retrieve multiple\
-    \ features for a location, you can simply\nperform a request for each of them.\
-    \ However, we additionally offer [\nresources](#tag/features_multiple) to conveniently\
-    \ request multiple features\nat the same time. "
+    \ on its own with its own dedicated endpoint. For\nexample the `Number of elements\
+    \ within a radius` feature can be accessed at\n`/number`.\n\nIf you need to retrieve\
+    \ multiple features for a location, you can simply\nperform a request for each\
+    \ of them. However, we additionally offer [\nresources](#tag/features_multiple)\
+    \ to conveniently request multiple features\nat the same time. "
 - name: multiple_features
   x-displayName: Multiple Features
   description: "These resources make it easy to access\nmultiple features for a given\
@@ -679,8 +691,10 @@ tags:
 - name: preset_features
   x-displayName: Feature Presets
   description: |-
-    These resources give you access to the most
-    common sets of features to extract for spatial locations.
+    Features presets give you quick access
+    to preselected sets of features related to a specific topic. These are selected
+    manually at the moment but will be selected by machine learning as sets of most
+    important features, e.g. for predicting real estate prices.
 - name: utils
   x-displayName: Utilities
   description: Endpoints for utility functions.

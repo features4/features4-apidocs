@@ -1409,10 +1409,10 @@ redoc-cli@^0.9.12:
     tslib "^2.0.0"
     yargs "^15.4.1"
 
-redoc@2.0.0-rc.41:
-  version "2.0.0-rc.41"
-  resolved "https://registry.yarnpkg.com/redoc/-/redoc-2.0.0-rc.41.tgz#b8b71a6b636b46ef404eac9109686c3ca55c080a"
-  integrity sha512-WqY4Qo3mxBvSVTqzBUAvRJ5Sq8rEDCd3I6Rs03WriPJZVG65qcf7eCnBaMEdppq+VG8nJNBebu4RC5T+QRLMIQ==
+redoc@2.0.0-rc.44:
+  version "2.0.0-rc.44"
+  resolved "https://registry.yarnpkg.com/redoc/-/redoc-2.0.0-rc.44.tgz#071a94665c2bb66678da53406a0a55b982a55081"
+  integrity sha512-IK8T8jd4NKDdYmwrAQ2RYq3Q+YuTvj037v4D6+qdzh8CMQJViz4aZFHsbWGr1LuiliHzgH0WkDqi7tvlZXye5Q==
   dependencies:
     "@redocly/react-dropdown-aria" "^2.0.11"
     "@types/node" "^13.11.1"
