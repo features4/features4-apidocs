@@ -18,17 +18,18 @@ info:
     \ your private API key from your there.\n3. Copy and paste the code below to make\
     \ your first request. Please replace `API_TEST_KEY` with your private API key.\n\
     \n```bash\ncurl https://api.features4.com/v1/number \\\n  -u API_TEST_KEY: \\\n\
-    \  -H \"Content-Type: application/json\" \\\n  -d '{\"lat\": 48.137, \"lng\":\
-    \ 11.576, \"element\": \"bar\", \"radius\": 500}'\n```\n\n> You need to include\
-    \ an API key as username in HTTP Basic Auth. The colon prevents cURL from asking\
-    \ for a password (for details see: [Authentication](#tag/authentication)), otherwise\
-    \ you will receive a `401 - Unauthorized` error.\n\n> You can use the API key\
-    \ `API_TEST_KEY` to try out the examples in this reference. However, the number\
-    \ of features you can get is limited. Use your private API key for more features.\n\
-    \n# Introduction\nThe base url for all API requests is:\n```bash\nhttps://api.features4.com/v1\n\
-    ```\nFor accessing a particular API resource you just append its endpoint name\
-    \ to the base path. If, for example, you want to access the `number` [resource](#operation/Number%20of%20elements)\
-    \ you build the requst url as base url and `/number`:\n<pre><code>https://api.features4.com/v1<span\
+    \  -H \"Content-Type: application/json\" \\\n  -d '{\"location\": {\"lat\": 48.137,\
+    \ \"lng\": 11.576}, \"element\": \"bar\", \"radius\": 500}'\n```\n\n> You need\
+    \ to include an API key as username in HTTP Basic Auth. The colon prevents cURL\
+    \ from asking for a password (for details see: [Authentication](#tag/authentication)),\
+    \ otherwise you will receive a `401 - Unauthorized` error.\n\n> You can use the\
+    \ API key `API_TEST_KEY` to try out the examples in this reference. However, the\
+    \ number of features you can get is limited. Use your private API key for more\
+    \ features.\n\n# Introduction\nThe base url for all API requests is:\n```bash\n\
+    https://api.features4.com/v1\n```\nFor accessing a particular API resource you\
+    \ just append its endpoint name to the base path. If, for example, you want to\
+    \ access the `number` [resource](#operation/Number%20of%20elements) you build\
+    \ the requst url as base url and `/number`:\n<pre><code>https://api.features4.com/v1<span\
     \ class=\"token variable\">/number</span></code></pre>\nPlease make sure to always\
     \ use the `https` protocol, because to protect the security of your api keys all\
     \ requests using the `http` protocol will fail.\n\n## Authentication\nFeatures4\
@@ -214,14 +215,14 @@ paths:
               $ref: '#/components/schemas/Features'
             example:
               features:
-              - endpoint: /number
+              - endpoint: number
                 params:
                   location:
                     lat: 48.11
                     lng: 11.57
                   element: bar
                   radius: 500
-              - endpoint: /distance
+              - endpoint: distance
                 params:
                   location:
                     lat: 48.11
@@ -246,20 +247,20 @@ paths:
       - lang: Python
         source: "import requests\n\nurl = \"https://api.features4.com/v1/features\"\
           \n\nauth = (\"API_TEST_KEY\", \"\")\n\njson = {\n  \"features\": [\n   \
-          \ {\n      \"endpoint\": \"/number\",\n      \"params\": {\n        \"location\"\
+          \ {\n      \"endpoint\": \"number\",\n      \"params\": {\n        \"location\"\
           : {\n          \"lat\": 48.11,\n          \"lng\": 11.57\n        },\n \
           \       \"element\": \"bar\",\n        \"radius\": 500\n      }\n    },\n\
-          \    {\n      \"endpoint\": \"/distance\",\n      \"params\": {\n      \
-          \  \"location\": {\n          \"lat\": 48.11,\n          \"lng\": 11.57\n\
+          \    {\n      \"endpoint\": \"distance\",\n      \"params\": {\n       \
+          \ \"location\": {\n          \"lat\": 48.11,\n          \"lng\": 11.57\n\
           \        },\n        \"element\": \"bar\"\n      }\n    }\n  ]\n}\n\nr =\
           \ requests.post(\n  url=url,\n  json=json,\n  auth=auth\n)\n\nr.json()"
       - lang: R
         source: "library(httr)\nlibrary(jsonlite)\n\nurl <- \"https://api.features4.com/v1/features\"\
-          \n\njson <- '{\n  \"features\": [\n    {\n      \"endpoint\": \"/number\"\
+          \n\njson <- '{\n  \"features\": [\n    {\n      \"endpoint\": \"number\"\
           ,\n      \"params\": {\n        \"location\": {\n          \"lat\": 48.11,\n\
           \          \"lng\": 11.57\n        },\n        \"element\": \"bar\",\n \
           \       \"radius\": 500\n      }\n    },\n    {\n      \"endpoint\": \"\
-          /distance\",\n      \"params\": {\n        \"location\": {\n          \"\
+          distance\",\n      \"params\": {\n        \"location\": {\n          \"\
           lat\": 48.11,\n          \"lng\": 11.57\n        },\n        \"element\"\
           : \"bar\"\n      }\n    }\n  ]\n}'\n\nbody <- fromJSON(\n  json,\n  simplifyDataFrame\
           \ = FALSE\n)\n\nr <- POST(\n  url = url,\n  body = body,\n  encode = \"\
@@ -267,10 +268,10 @@ paths:
       - lang: Shell
         source: "curl https://api.features4.com/v1/features \\\n  -u API_TEST_KEY:\
           \ \\\n  -H \"Content-Type: application/json\" \\\n  -d '{\"features\": [{\"\
-          endpoint\": \"/number\", \"params\": {\"location\": {\"lat\": 48.11, \"\
-          lng\": 11.57}, \"element\": \"bar\", \"radius\": 500}}, {\"endpoint\": \"\
-          /distance\", \"params\": {\"location\": {\"lat\": 48.11, \"lng\": 11.57},\
-          \ \"element\": \"bar\"}}]}'"
+          endpoint\": \"number\", \"params\": {\"location\": {\"lat\": 48.11, \"lng\"\
+          : 11.57}, \"element\": \"bar\", \"radius\": 500}}, {\"endpoint\": \"distance\"\
+          , \"params\": {\"location\": {\"lat\": 48.11, \"lng\": 11.57}, \"element\"\
+          : \"bar\"}}]}'"
   /presets/living:
     post:
       operationId: Living
@@ -564,8 +565,8 @@ components:
                 description: Value of the feature
               endpoint:
                 enum:
-                - /number
-                - /distance
+                - number
+                - distance
                 type: string
                 writeOnly: true
                 description: The endpoint url for the individual feature.
@@ -604,8 +605,8 @@ components:
                 description: Value of the feature
               endpoint:
                 enum:
-                - /number
-                - /distance
+                - number
+                - distance
                 type: string
                 writeOnly: true
                 description: The endpoint url for the individual feature.
