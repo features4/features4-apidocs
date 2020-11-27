@@ -144,22 +144,22 @@ paths:
       - features
       x-code-samples:
       - lang: Python
-        source: "import requests\n\nurl = \"https://api.features4.com/v1//number\"\
-          \n\nauth = (\"API_TEST_KEY\", \"\")\n\njson = {\n  \"location\": {\n   \
-          \ \"lat\": 48.11,\n    \"lng\": 11.57\n  },\n  \"element\": \"bar\",\n \
-          \ \"radius\": 500\n}\n\nr = requests.post(\n  url=url,\n  json=json,\n \
-          \ auth=auth\n)\n\nr.json()"
+        source: "import requests\n\nurl = \"https://api.features4.com/v1/number\"\n\
+          \nauth = (\"API_TEST_KEY\", \"\")\n\njson = {\n  \"location\": {\n    \"\
+          lat\": 48.11,\n    \"lng\": 11.57\n  },\n  \"element\": \"bar\",\n  \"radius\"\
+          : 500\n}\n\nr = requests.post(\n  url=url,\n  json=json,\n  auth=auth\n\
+          )\n\nr.json()"
       - lang: R
-        source: "library(httr)\nlibrary(jsonlite)\n\nurl <- \"https://api.features4.com/v1//number\"\
+        source: "library(httr)\nlibrary(jsonlite)\n\nurl <- \"https://api.features4.com/v1/number\"\
           \n\njson <- '{\n  \"location\": {\n    \"lat\": 48.11,\n    \"lng\": 11.57\n\
           \  },\n  \"element\": \"bar\",\n  \"radius\": 500\n}'\n\nbody <- fromJSON(\n\
           \  json,\n  simplifyDataFrame = FALSE\n)\n\nr <- POST(\n  url = url,\n \
           \ body = body,\n  encode = \"json\",\n  authenticate(\"API_TEST_KEY\", \"\
           \")\n)\n\ncontent(r)"
       - lang: Shell
-        source: "curl https://api.features4.com/v1//number \\\n  -u API_TEST_KEY:\
-          \ \\\n  -H \"Content-Type: application/json\" \\\n  -d '{\"location\": {\"\
-          lat\": 48.11, \"lng\": 11.57}, \"element\": \"bar\", \"radius\": 500}'"
+        source: "curl https://api.features4.com/v1/number \\\n  -u API_TEST_KEY: \\\
+          \n  -H \"Content-Type: application/json\" \\\n  -d '{\"location\": {\"lat\"\
+          : 48.11, \"lng\": 11.57}, \"element\": \"bar\", \"radius\": 500}'"
   /distance:
     post:
       operationId: Distance
@@ -189,18 +189,18 @@ paths:
       - features
       x-code-samples:
       - lang: Python
-        source: "import requests\n\nurl = \"https://api.features4.com/v1//distance\"\
+        source: "import requests\n\nurl = \"https://api.features4.com/v1/distance\"\
           \n\nauth = (\"API_TEST_KEY\", \"\")\n\njson = {\n  \"location\": {\n   \
           \ \"lat\": 48.11,\n    \"lng\": 11.57\n  },\n  \"element\": \"bar\"\n}\n\
           \nr = requests.post(\n  url=url,\n  json=json,\n  auth=auth\n)\n\nr.json()"
       - lang: R
-        source: "library(httr)\nlibrary(jsonlite)\n\nurl <- \"https://api.features4.com/v1//distance\"\
+        source: "library(httr)\nlibrary(jsonlite)\n\nurl <- \"https://api.features4.com/v1/distance\"\
           \n\njson <- '{\n  \"location\": {\n    \"lat\": 48.11,\n    \"lng\": 11.57\n\
           \  },\n  \"element\": \"bar\"\n}'\n\nbody <- fromJSON(\n  json,\n  simplifyDataFrame\
           \ = FALSE\n)\n\nr <- POST(\n  url = url,\n  body = body,\n  encode = \"\
           json\",\n  authenticate(\"API_TEST_KEY\", \"\")\n)\n\ncontent(r)"
       - lang: Shell
-        source: "curl https://api.features4.com/v1//distance \\\n  -u API_TEST_KEY:\
+        source: "curl https://api.features4.com/v1/distance \\\n  -u API_TEST_KEY:\
           \ \\\n  -H \"Content-Type: application/json\" \\\n  -d '{\"location\": {\"\
           lat\": 48.11, \"lng\": 11.57}, \"element\": \"bar\"}'"
   /area:
@@ -234,21 +234,21 @@ paths:
       - features
       x-code-samples:
       - lang: Python
-        source: "import requests\n\nurl = \"https://api.features4.com/v1//area\"\n\
-          \nauth = (\"API_TEST_KEY\", \"\")\n\njson = {\n  \"location\": {\n    \"\
-          lat\": 48.11,\n    \"lng\": 11.57\n  },\n  \"element\": \"parking\",\n \
-          \ \"radius\": 500\n}\n\nr = requests.post(\n  url=url,\n  json=json,\n \
-          \ auth=auth\n)\n\nr.json()"
+        source: "import requests\n\nurl = \"https://api.features4.com/v1/area\"\n\n\
+          auth = (\"API_TEST_KEY\", \"\")\n\njson = {\n  \"location\": {\n    \"lat\"\
+          : 48.11,\n    \"lng\": 11.57\n  },\n  \"element\": \"parking\",\n  \"radius\"\
+          : 500\n}\n\nr = requests.post(\n  url=url,\n  json=json,\n  auth=auth\n\
+          )\n\nr.json()"
       - lang: R
-        source: "library(httr)\nlibrary(jsonlite)\n\nurl <- \"https://api.features4.com/v1//area\"\
+        source: "library(httr)\nlibrary(jsonlite)\n\nurl <- \"https://api.features4.com/v1/area\"\
           \n\njson <- '{\n  \"location\": {\n    \"lat\": 48.11,\n    \"lng\": 11.57\n\
           \  },\n  \"element\": \"parking\",\n  \"radius\": 500\n}'\n\nbody <- fromJSON(\n\
           \  json,\n  simplifyDataFrame = FALSE\n)\n\nr <- POST(\n  url = url,\n \
           \ body = body,\n  encode = \"json\",\n  authenticate(\"API_TEST_KEY\", \"\
           \")\n)\n\ncontent(r)"
       - lang: Shell
-        source: "curl https://api.features4.com/v1//area \\\n  -u API_TEST_KEY: \\\
-          \n  -H \"Content-Type: application/json\" \\\n  -d '{\"location\": {\"lat\"\
+        source: "curl https://api.features4.com/v1/area \\\n  -u API_TEST_KEY: \\\n\
+          \  -H \"Content-Type: application/json\" \\\n  -d '{\"location\": {\"lat\"\
           : 48.11, \"lng\": 11.57}, \"element\": \"parking\", \"radius\": 500}'"
   /features:
     post:
@@ -292,7 +292,7 @@ paths:
       - multiple_features
       x-code-samples:
       - lang: Python
-        source: "import requests\n\nurl = \"https://api.features4.com/v1//features\"\
+        source: "import requests\n\nurl = \"https://api.features4.com/v1/features\"\
           \n\nauth = (\"API_TEST_KEY\", \"\")\n\njson = {\n  \"features\": [\n   \
           \ {\n      \"endpoint\": \"number\",\n      \"params\": {\n        \"location\"\
           : {\n          \"lat\": 48.11,\n          \"lng\": 11.57\n        },\n \
@@ -302,7 +302,7 @@ paths:
           \        },\n        \"element\": \"bar\"\n      }\n    }\n  ]\n}\n\nr =\
           \ requests.post(\n  url=url,\n  json=json,\n  auth=auth\n)\n\nr.json()"
       - lang: R
-        source: "library(httr)\nlibrary(jsonlite)\n\nurl <- \"https://api.features4.com/v1//features\"\
+        source: "library(httr)\nlibrary(jsonlite)\n\nurl <- \"https://api.features4.com/v1/features\"\
           \n\njson <- '{\n  \"features\": [\n    {\n      \"endpoint\": \"number\"\
           ,\n      \"params\": {\n        \"location\": {\n          \"lat\": 48.11,\n\
           \          \"lng\": 11.57\n        },\n        \"element\": \"bar\",\n \
@@ -313,7 +313,7 @@ paths:
           \ = FALSE\n)\n\nr <- POST(\n  url = url,\n  body = body,\n  encode = \"\
           json\",\n  authenticate(\"API_TEST_KEY\", \"\")\n)\n\ncontent(r)"
       - lang: Shell
-        source: "curl https://api.features4.com/v1//features \\\n  -u API_TEST_KEY:\
+        source: "curl https://api.features4.com/v1/features \\\n  -u API_TEST_KEY:\
           \ \\\n  -H \"Content-Type: application/json\" \\\n  -d '{\"features\": [{\"\
           endpoint\": \"number\", \"params\": {\"location\": {\"lat\": 48.11, \"lng\"\
           : 11.57}, \"element\": \"bar\", \"radius\": 500}}, {\"endpoint\": \"distance\"\
@@ -366,18 +366,18 @@ paths:
       - preset_features
       x-code-samples:
       - lang: Python
-        source: "import requests\n\nurl = \"https://api.features4.com/v1//presets/living\"\
+        source: "import requests\n\nurl = \"https://api.features4.com/v1/presets/living\"\
           \n\nauth = (\"API_TEST_KEY\", \"\")\n\njson = {\n  \"location\": {\n   \
           \ \"lat\": 48.11,\n    \"lng\": 11.57\n  }\n}\n\nr = requests.post(\n  url=url,\n\
           \  json=json,\n  auth=auth\n)\n\nr.json()"
       - lang: R
-        source: "library(httr)\nlibrary(jsonlite)\n\nurl <- \"https://api.features4.com/v1//presets/living\"\
+        source: "library(httr)\nlibrary(jsonlite)\n\nurl <- \"https://api.features4.com/v1/presets/living\"\
           \n\njson <- '{\n  \"location\": {\n    \"lat\": 48.11,\n    \"lng\": 11.57\n\
           \  }\n}'\n\nbody <- fromJSON(\n  json,\n  simplifyDataFrame = FALSE\n)\n\
           \nr <- POST(\n  url = url,\n  body = body,\n  encode = \"json\",\n  authenticate(\"\
           API_TEST_KEY\", \"\")\n)\n\ncontent(r)"
       - lang: Shell
-        source: "curl https://api.features4.com/v1//presets/living \\\n  -u API_TEST_KEY:\
+        source: "curl https://api.features4.com/v1/presets/living \\\n  -u API_TEST_KEY:\
           \ \\\n  -H \"Content-Type: application/json\" \\\n  -d '{\"location\": {\"\
           lat\": 48.11, \"lng\": 11.57}}'"
   /elements:
@@ -411,18 +411,18 @@ paths:
       - utils
       x-code-samples:
       - lang: Python
-        source: "import requests\n\nurl = \"https://api.features4.com/v1//elements\"\
+        source: "import requests\n\nurl = \"https://api.features4.com/v1/elements\"\
           \n\nauth = (\"API_TEST_KEY\", \"\")\n\njson = {\n  \"location\": {\n   \
           \ \"lat\": 48.11,\n    \"lng\": 11.57\n  }\n}\n\nr = requests.post(\n  url=url,\n\
           \  json=json,\n  auth=auth\n)\n\nr.json()"
       - lang: R
-        source: "library(httr)\nlibrary(jsonlite)\n\nurl <- \"https://api.features4.com/v1//elements\"\
+        source: "library(httr)\nlibrary(jsonlite)\n\nurl <- \"https://api.features4.com/v1/elements\"\
           \n\njson <- '{\n  \"location\": {\n    \"lat\": 48.11,\n    \"lng\": 11.57\n\
           \  }\n}'\n\nbody <- fromJSON(\n  json,\n  simplifyDataFrame = FALSE\n)\n\
           \nr <- POST(\n  url = url,\n  body = body,\n  encode = \"json\",\n  authenticate(\"\
           API_TEST_KEY\", \"\")\n)\n\ncontent(r)"
       - lang: Shell
-        source: "curl https://api.features4.com/v1//elements \\\n  -u API_TEST_KEY:\
+        source: "curl https://api.features4.com/v1/elements \\\n  -u API_TEST_KEY:\
           \ \\\n  -H \"Content-Type: application/json\" \\\n  -d '{\"location\": {\"\
           lat\": 48.11, \"lng\": 11.57}}'"
 components:
