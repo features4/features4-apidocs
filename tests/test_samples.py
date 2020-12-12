@@ -112,7 +112,7 @@ samples = get_code_samples(schema_path=path)
 
 base_url = 'https://api.features4.com/v1'
 
-@pytest.mark.parametrize('environment', ['production', 'development'])
+@pytest.mark.parametrize('environment', ['production'])
 @pytest.mark.parametrize('sample', samples)
 def test_code_sample(sample, environment):
     handler = get_language_handler(sample.lang)
