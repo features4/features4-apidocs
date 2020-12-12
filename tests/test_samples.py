@@ -27,7 +27,8 @@ def get_code_samples(schema_path):
     samples = []
     for path, method_description in schema["paths"].items():
         for method, description in method_description.items():
-            for example in description["x-code-samples"]:
+            print(description)
+            for example in description.get("x-code-samples", []):
                 lang = example["lang"]
                 source = example["source"]
                 sample = CodeSample(endpoint=path, method=method, lang=lang, source=source)
