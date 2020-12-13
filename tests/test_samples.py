@@ -13,14 +13,13 @@ log = logging.getLogger(__name__)
 
 @dataclass
 class CodeSample:
+    base_url: str
     endpoint: str
     method: str
     lang: str
     source: str
 
-def extract_url_from_schema(schema_path):
-    with open(schema_path, 'r') as f:
-        schema = yaml.safe_load(f)    
+def extract_url_from_schema(schema):
     url = schema["servers"][0]["url"]
     if url[-1] != "/":
         url += "/"
@@ -32,13 +31,14 @@ def get_code_samples(schema_path):
     with open(schema_path, 'r') as f:
         schema = yaml.safe_load(f)
     samples = []
+    url = extract_url_from_schema(schema=schema)
     for path, method_description in schema["paths"].items():
         for method, description in method_description.items():
             examples = description.get("x-code-samples", [])
             for example in examples:
                 lang = example["lang"]
                 source = example["source"]
-                sample = CodeSample(endpoint=path, method=method, lang=lang, source=source)
+                sample = CodeSample(base_url=url, endpoint=path, method=method, lang=lang, source=source)
                 samples.append(sample)
     return samples
 
@@ -47,19 +47,27 @@ class SampleHandler:
     status_code_msg = None
     subprocess_args = None
 
-    def __init__(self, base_url, sample, environment='production'):
-        self.base_url = base_url
+    def __init__(self, sample, base_url=None, api_key=None):
         self.sample = deepcopy(sample)
-        self.environment = environment
+        if base_url and not base_url.endswith("/"):
+            base_url += "/"
+        self.base_url = base_url
+        self.api_key = api_key
 
     def change_api_key(self):
-        self.sample.source = self.sample.source.replace('API_TEST_KEY', os.environ["API_TEST_KEY"])
+        self.sample.source = self.sample.source.replace('API_TEST_KEY', self.api_key)
 
     def add_status_code_message(self):
         self.sample.source = self.sample.source + self.status_code_msg
 
+    def replace_base_url(self, url):
+        self.sample.source = self.sample.source.replace(self.sample.base_url, url)
+
     def run(self):
-        self.change_api_key()
+        if self.base_url:
+            self.replace_base_url(url=self.base_url)
+        if self.api_key:
+            self.change_api_key()
         self.add_status_code_message()
         result = self.run_subprocess()
         return result
@@ -117,9 +125,11 @@ def base_url():
     return url
 
 @pytest.mark.parametrize('sample', samples)
-def test_code_sample(base_url, sample):
+def test_code_sample(sample, base_url=None, api_key=None):
+    if not api_key:
+        api_key = os.environ.get("API_TEST_KEY")
     handler = get_language_handler(sample.lang)
-    h = handler(base_url=base_url, sample=sample)
+    h = handler(sample=sample, base_url=base_url)
     s = h.run()
     assert s.stderr.strip() == '200'
 
@@ -127,4 +137,4 @@ def test_code_sample(base_url, sample):
 if __name__ == '__main__':
     samples = get_code_samples(schema_path=path)
     for sample in samples:
-        test_code_sample(base_url=base_url, sample=sample)
+        test_code_sample(sample=sample, base_url="http://localhost:8000/v1/")
