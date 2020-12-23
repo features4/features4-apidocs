@@ -124,12 +124,15 @@ def base_url():
     url = os.environ.get("API_BASE_URL") or extract_url_from_schema(schema_path=path)
     return url
 
+@pytest.fixture
+def api_key():
+    key = os.environ.get("API_TEST_KEY")
+    return key
+
 @pytest.mark.parametrize('sample', samples)
 def test_code_sample(sample, base_url=None, api_key=None):
-    if not api_key:
-        api_key = os.environ.get("API_TEST_KEY")
     handler = get_language_handler(sample.lang)
-    h = handler(sample=sample, base_url=base_url)
+    h = handler(sample=sample, base_url=base_url, api_key=api_key)
     s = h.run()
     assert s.stderr.strip() == '200'
 

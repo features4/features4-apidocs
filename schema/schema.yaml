@@ -701,6 +701,7 @@ components:
                 enum:
                 - number
                 - distance
+                - area
                 type: string
                 writeOnly: true
                 description: The endpoint url for the individual feature.
@@ -708,6 +709,7 @@ components:
                 oneOf:
                 - $ref: '#/components/schemas/Number'
                 - $ref: '#/components/schemas/Distance'
+                - $ref: '#/components/schemas/Area'
                 writeOnly: true
                 description: The parameters you would pass to the individual feature.
             required:
@@ -741,6 +743,7 @@ components:
                 enum:
                 - number
                 - distance
+                - area
                 type: string
                 writeOnly: true
                 description: The endpoint url for the individual feature.
@@ -748,6 +751,7 @@ components:
                 oneOf:
                 - $ref: '#/components/schemas/Number'
                 - $ref: '#/components/schemas/Distance'
+                - $ref: '#/components/schemas/Area'
                 writeOnly: true
                 description: The parameters you would pass to the individual feature.
             required:
